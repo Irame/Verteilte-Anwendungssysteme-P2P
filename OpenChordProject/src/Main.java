@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Set;
 
 public class Main {
-	private static Chord networkChord;
 	private static HashMap<String, Chord> clients;
 
     public static void main(String[] args) throws ServiceException, IOException {
@@ -51,8 +50,8 @@ public class Main {
 				    System.exit(0);
 			    } else if (input[0].equals("create") && input.length == 4) {
 				    createChordClient(input[1], input[2], input[3]);
-			    } else if (input[0].equals("join") && input.length == 4) {
-				    joinChordClient(input[1], input[2], input[3]);
+			    } else if (input[0].equals("join") && input.length == 6) {
+				    joinChordClient(input[1], input[2], input[3], input[4], input[5]);
 			    } else if (input[0].equals("leave") && input.length == 2) {
 				    leaveChordClient(input[1]);
 			    } else if (input[0].equals("insert") && input.length == 4) {
@@ -110,32 +109,31 @@ public class Main {
 
 	private static void leaveChordClient(String name) throws ServiceException {
 		Chord chord = clients.remove(name);
-		if (networkChord == chord && clients.size() > 0) {
-			networkChord = clients.entrySet().iterator().next().getValue();
-		}
 
 		chord.leave();
 	}
 
-	private static void joinChordClient(String name, String ip, String port) throws ServiceException, MalformedURLException {
+	private static void joinChordClient(String name, String localIp, String localPort, String otherIp, String otherPort) throws ServiceException, MalformedURLException {
 		if (clients.containsKey(name)) {
 			System.out.println("Chord with name '" + name + "' already present!");
+            return;
 		}
 
 		String protocol = URL.KNOWN_PROTOCOLS.get(URL.SOCKET_PROTOCOL);
-		URL url = new URL(protocol + "://" + ip + ":" + port + "/");
+		URL localUrl = new URL(protocol + "://" + localIp + ":" + localPort + "/");
+		URL otherUrl = new URL(protocol + "://" + otherIp + ":" + otherPort + "/");
 
 		Chord chord = new ChordImpl();
-		chord.join(url, networkChord.getURL());
+		chord.join(localUrl, otherUrl);
 
 		clients.put(name, chord);
 	}
 
 	private static void createChordClient(String name, String ip, String port) throws MalformedURLException, ServiceException {
-		if (networkChord != null) {
-			System.out.println("Network already created!");
-			return;
-		}
+        if (clients.containsKey(name)) {
+            System.out.println("Chord with name '" + name + "' already present!");
+            return;
+        }
 
 		String protocol = URL.KNOWN_PROTOCOLS.get(URL.SOCKET_PROTOCOL);
 		URL url = new URL(protocol + "://" + ip + ":" + port + "/");
@@ -144,7 +142,6 @@ public class Main {
 		chord.create(url);
 
 		clients.put(name, chord);
-		networkChord = chord;
 	}
 
     private static class StringKey implements Key {

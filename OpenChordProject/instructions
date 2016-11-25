@@ -1,3 +1,3 @@
 create c1 localhost 8080
-join c2 localhost 8081
+join c2 localhost 8081 localhost 8080
 insert c1 k1 blaedasdkjhal
