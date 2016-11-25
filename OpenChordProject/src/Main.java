@@ -11,30 +11,48 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Set;
 
 public class Main {
 	private static Chord networkChord;
 	private static HashMap<String, Chord> clients;
-	private static int port = 8080;
 
     public static void main(String[] args) throws ServiceException, IOException {
-	    clients = new HashMap<String, Chord>();
+	    clients = new HashMap<>();
 	    PropertiesLoader.loadPropertyFile();
-	    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	    BufferedReader stdInBr = new BufferedReader(new InputStreamReader(System.in));
+		BufferedReader fileInBr = null;
 
+		boolean readingFile = false;
 	    while (true) {
 		    System.out.print(">");
-		    String[] input = br.readLine().split(" +");
+			String[] input = null;
+			if (readingFile){
+				String readString = fileInBr.readLine();
+				if (readString == null)
+					readingFile = false;
+				else {
+                    input = readString.split(" +");
+                    System.out.println(readString);
+                }
+			}
+			if (!readingFile) {
+				input = stdInBr.readLine().split(" +");
+			}
+
 		    input[0] = input[0].toLowerCase();
 		    try {
 			    if (input[0].equals("exit")) {
 				    System.exit(0);
-			    } else if (input[0].equals("create") && input.length == 2) {
-				    createChordClient(input[1]);
-			    } else if (input[0].equals("join") && input.length == 2) {
-				    joinChordClient(input[1]);
+			    } else if (input[0].equals("create") && input.length == 4) {
+				    createChordClient(input[1], input[2], input[3]);
+			    } else if (input[0].equals("join") && input.length == 4) {
+				    joinChordClient(input[1], input[2], input[3]);
 			    } else if (input[0].equals("leave") && input.length == 2) {
 				    leaveChordClient(input[1]);
 			    } else if (input[0].equals("insert") && input.length == 4) {
@@ -43,7 +61,13 @@ public class Main {
 				    retrieveData(input[1], input[2]);
 			    } else if (input[0].equals("remove") && input.length == 4) {
 				    removeData(input[1], input[2], input[3]);
-			    }
+			    } else if (input[0].equals("file") && input.length == 2) {
+					Path path = FileSystems.getDefault().getPath(input[1]);
+					fileInBr = Files.newBufferedReader(path, StandardCharsets.UTF_8);
+					readingFile = true;
+				} else {
+                    System.out.println("Invalid Command!");
+                }
 		    } catch (Exception e) {
 			    e.printStackTrace();
 		    }
@@ -93,13 +117,13 @@ public class Main {
 		chord.leave();
 	}
 
-	private static void joinChordClient(String name) throws ServiceException, MalformedURLException {
+	private static void joinChordClient(String name, String ip, String port) throws ServiceException, MalformedURLException {
 		if (clients.containsKey(name)) {
 			System.out.println("Chord with name '" + name + "' already present!");
 		}
 
 		String protocol = URL.KNOWN_PROTOCOLS.get(URL.SOCKET_PROTOCOL);
-		URL url = new URL(protocol + "://localhost:" + port++ + "/");
+		URL url = new URL(protocol + "://" + ip + ":" + port + "/");
 
 		Chord chord = new ChordImpl();
 		chord.join(url, networkChord.getURL());
@@ -107,14 +131,14 @@ public class Main {
 		clients.put(name, chord);
 	}
 
-	private static void createChordClient(String name) throws MalformedURLException, ServiceException {
+	private static void createChordClient(String name, String ip, String port) throws MalformedURLException, ServiceException {
 		if (networkChord != null) {
 			System.out.println("Network already created!");
 			return;
 		}
 
 		String protocol = URL.KNOWN_PROTOCOLS.get(URL.SOCKET_PROTOCOL);
-		URL url = new URL(protocol + "://localhost:" + port++ + "/");
+		URL url = new URL(protocol + "://" + ip + ":" + port + "/");
 
 		Chord chord = new ChordImpl();
 		chord.create(url);
