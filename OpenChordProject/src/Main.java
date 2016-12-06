@@ -6,10 +6,10 @@ import de.uniba.wiai.lspi.chord.service.PropertiesLoader;
 import de.uniba.wiai.lspi.chord.service.ServiceException;
 import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Serializable;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
@@ -56,8 +56,12 @@ public class Main {
 				    leaveChordClient(input[1]);
 			    } else if (input[0].equals("insert") && input.length == 4) {
 					insertData(input[1], input[2], input[3]);
+			    } else if (input[0].equals("insertimg") && input.length == 4) {
+					insertImage(input[1], input[2], input[3]);
 			    } else if (input[0].equals("retrieve") && input.length == 3) {
 				    retrieveData(input[1], input[2]);
+			    } else if (input[0].equals("retrieveimg") && input.length == 4) {
+				    retrieveImage(input[1], input[2], input[3]);
 			    } else if (input[0].equals("remove") && input.length == 4) {
 				    removeData(input[1], input[2], input[3]);
 			    } else if (input[0].equals("file") && input.length == 2) {
@@ -71,6 +75,33 @@ public class Main {
 			    e.printStackTrace();
 		    }
 	    }
+    }
+
+	private static void retrieveImage(String name, String key, String path) throws ServiceException, IOException {
+		Chord chord = clients.get(name);
+		if (chord == null) {
+			System.out.println("Chord with name " + name + " not found!");
+			return;
+		}
+
+		Set<Serializable> data = chord.retrieve(new StringKey(key));
+
+		for (Serializable s : data) {
+			ImageContainer img = (ImageContainer) s;
+			ImageIO.write(img.getImage(), "png", new File(path));
+			return;
+		}
+	}
+
+	private static void insertImage(String name, String key, String path) throws IOException, ServiceException {
+	    BufferedImage img = ImageIO.read(new File(path));
+	    Chord chord = clients.get(name);
+	    if (chord == null) {
+		    System.out.println("Chord with name " + name + " not found!");
+		    return;
+	    }
+
+	    chord.insert(new StringKey(key), new ImageContainer(img));
     }
 
 	private static void removeData(String name, String key, String data) throws ServiceException {
@@ -93,7 +124,7 @@ public class Main {
 		Set<Serializable> data = chord.retrieve(new StringKey(key));
 		int i = 1;
 		for (Serializable s : data) {
-			System.out.println("Data [" + i + "]: " + s);
+			System.out.println("Data [" + i++ + "]: " + s);
 		}
 	}
 
@@ -171,6 +202,27 @@ public class Main {
 	    @Override
 	    public int hashCode() {
 		    return key != null ? key.hashCode() : 0;
+	    }
+    }
+
+    private static class ImageContainer implements Serializable {
+	    public int width;
+		public int height;
+		public int imgType;
+    	public int[] imgData;
+
+	    public ImageContainer(BufferedImage img) {
+		    this.width = img.getWidth();
+		    this.height = img.getHeight();
+		    this.imgType = img.getType();
+		    this.imgData = new int[width*height];
+		    this.imgData = img.getRGB(0, 0, width, height, imgData, 0, width);
+	    }
+
+	    public BufferedImage getImage() {
+			BufferedImage result = new BufferedImage(width, height, imgType);
+			result.setRGB(0, 0, width, height, imgData, 0, width);
+	    	return result;
 	    }
     }
 }
