@@ -1,22 +1,30 @@
 import com.sun.istack.internal.NotNull;
+import de.uniba.wiai.lspi.chord.com.CommunicationException;
+import de.uniba.wiai.lspi.chord.com.Node;
+import de.uniba.wiai.lspi.chord.data.ID;
 import de.uniba.wiai.lspi.chord.data.URL;
 import de.uniba.wiai.lspi.chord.service.Chord;
 import de.uniba.wiai.lspi.chord.service.Key;
 import de.uniba.wiai.lspi.chord.service.PropertiesLoader;
 import de.uniba.wiai.lspi.chord.service.ServiceException;
 import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
+import de.uniba.wiai.lspi.chord.service.impl.NodeImpl;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.net.MalformedURLException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
 	private static HashMap<String, Chord> clients;
@@ -33,9 +41,10 @@ public class Main {
 			String[] input = null;
 			if (readingFile){
 				String readString = fileInBr.readLine();
-				if (readString == null)
+				if (readString == null) {
+					fileInBr.close();
 					readingFile = false;
-				else {
+				} else {
                     input = readString.split(" +");
                     System.out.println(readString);
                 }
@@ -65,9 +74,15 @@ public class Main {
 			    } else if (input[0].equals("remove") && input.length == 4) {
 				    removeData(input[1], input[2], input[3]);
 			    } else if (input[0].equals("file") && input.length == 2) {
-					Path path = FileSystems.getDefault().getPath(input[1]);
-					fileInBr = Files.newBufferedReader(path, StandardCharsets.UTF_8);
-					readingFile = true;
+				    Path path = FileSystems.getDefault().getPath(input[1]);
+				    fileInBr = Files.newBufferedReader(path, StandardCharsets.UTF_8);
+				    readingFile = true;
+			    } else if (input[0].equals("info") && input.length == 1) {
+					printNodesInfo();
+			    } else if (input[0].equals("info") && input.length == 2) {
+				    printNodeInfo(input[1]);
+			    } else if (input[0].equals("findall") && input.length == 2) {
+				    findAllNodesAndWriteToFile(input[1]);
 				} else {
                     System.out.println("Invalid Command!");
                 }
@@ -75,6 +90,63 @@ public class Main {
 			    e.printStackTrace();
 		    }
 	    }
+    }
+
+    private static void findAllNodesAndWriteToFile(String path) throws InvocationTargetException, NoSuchMethodException, CommunicationException, IllegalAccessException, IOException {
+    	List<Node> allNodes = findAllNodes();
+		FileWriter fw = new FileWriter(path);
+    	String data = allNodes.stream().map(node -> node.getNodeID().toHexString().trim() + ";" + node.getNodeURL()).collect(Collectors.joining("\n"));
+	    fw.write(data);
+	    fw.flush();
+    }
+
+    private static List<Node> findAllNodes() throws IllegalAccessException, CommunicationException, NoSuchMethodException, InvocationTargetException {
+    	List<Node> result = new ArrayList<>();
+	    Method findSuccessor = clients.get("c3").getClass().getDeclaredMethod("findSuccessor", ID.class);
+	    findSuccessor.setAccessible(true);
+
+	    BigInteger idBigInt = BigInteger.ZERO;
+
+	    BigInteger newIdBigInt = null;
+		while (true) {
+			byte[] bigIntBytes = idBigInt.toByteArray();
+			byte[] buffer = new byte[20];
+			Arrays.fill(buffer, (byte) 0);
+
+			if (bigIntBytes.length > 20)
+				System.arraycopy(bigIntBytes, bigIntBytes.length-20, buffer, 0, 20);
+			else
+				System.arraycopy(bigIntBytes, 0, buffer, 20-bigIntBytes.length, bigIntBytes.length);
+
+			ID id = new ID(buffer);
+			Node node = (Node) findSuccessor.invoke(clients.get("c3"), id);
+
+			newIdBigInt = new BigInteger(node.getNodeID().toHexString().replace(" ", ""), 16);
+			if (newIdBigInt.compareTo(idBigInt) < 0)
+				break;
+
+			result.add(node);
+
+			if (newIdBigInt.compareTo(idBigInt) == 0)
+				break;
+			idBigInt = newIdBigInt.add(BigInteger.ONE);
+		}
+
+		return result;
+    }
+
+    private static void printNodesInfo() {
+	    clients.entrySet().stream()
+			    .sorted(Comparator.comparing(o -> o.getValue().getID()))
+			    .forEachOrdered(entry -> printNodeInfo(entry.getKey()));
+    }
+
+    private static void printNodeInfo(String name) {
+	    WriteLine("Name: %s", name);
+	    ChordImpl chordImpl = (ChordImpl) clients.get(name);
+	    WriteLine("\t%s", chordImpl.printReferences().replace("\n", "\n\t"));
+	    Write("\t%s", chordImpl.printEntries().replace("\n", "\n\t"));
+	    WriteLine("");
     }
 
 	private static void retrieveImage(String name, String key, String path) throws ServiceException, IOException {
@@ -225,4 +297,20 @@ public class Main {
 	    	return result;
 	    }
     }
+
+    private static void WriteLine(String s) {
+    	System.out.println(s);
+    }
+
+	private static void WriteLine(String format, Object... args) {
+		System.out.println(String.format(format, args));
+	}
+
+	private static void Write(String s) {
+    	System.out.print(s);
+	}
+
+	private static void Write(String format, Object... args) {
+		System.out.print(String.format(format, args));
+	}
 }
