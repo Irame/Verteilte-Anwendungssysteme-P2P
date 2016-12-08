@@ -1,5 +1,6 @@
 import de.uniba.wiai.lspi.chord.com.Node;
 import de.uniba.wiai.lspi.chord.service.ServiceException;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -7,17 +8,17 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainController {
     public ListView<ChordNode> localChordNodeListView;
@@ -27,10 +28,21 @@ public class MainController {
 
     public ListView<Node> networkScanResultListView;
     public ObservableList<Node> localNodeList;
+    public Button networkScanButton;
+    public CheckBox automatedScanCheckBox;
+    public CheckBox saveScanToFileCheckBox;
+    public TextField saveScanToFileTextField;
 
     public Label nodeLabel;
     public Label referencesLabel;
     public Label entriesLabel;
+
+    public TextField entryKeyTextField;
+    public TextField entryDataTextField;
+    public Button addEntryButton;
+    public Button removeEntryButton;
+
+    private Thread scannerThread;
 
     public void init() {
         localChordNodeList = FXCollections.observableList(new ArrayList<>());
@@ -39,7 +51,18 @@ public class MainController {
         localNodeList = FXCollections.observableList(new ArrayList<>());
         networkScanResultListView.setItems(localNodeList);
 
-        removeNodeButton.disableProperty().bind(Bindings.size(localChordNodeList).isEqualTo(0));
+        removeNodeButton.disableProperty().bind(localChordNodeListView.getSelectionModel().selectedItemProperty().isNull());
+        networkScanButton.disableProperty().bind(localChordNodeListView.getSelectionModel().selectedItemProperty().isNull());
+
+        addEntryButton.disableProperty()
+                .bind(localChordNodeListView.getSelectionModel().selectedItemProperty().isNull()
+                        .or(entryKeyTextField.textProperty().isEmpty())
+                        .or(entryDataTextField.textProperty().isEmpty()));
+
+        removeEntryButton.disableProperty()
+                .bind(localChordNodeListView.getSelectionModel().selectedItemProperty().isNull()
+                        .or(entryKeyTextField.textProperty().isEmpty())
+                        .or(entryDataTextField.textProperty().isEmpty()));
 
         localChordNodeListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
@@ -64,6 +87,12 @@ public class MainController {
                 }
             }
         });
+
+        scannerThread = new Thread(new AutomatedNetworkScan());
+        scannerThread.setDaemon(true);
+        scannerThread.start();
+
+        automatedScanCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> scannerThread.interrupt());
     }
 
     public void addNewNode(ActionEvent actionEvent) {
@@ -109,6 +138,7 @@ public class MainController {
     }
 
     public void startNetworkScan(ActionEvent actionEvent) throws IllegalAccessException {
+        if (localChordNodeListView.getSelectionModel().isEmpty()) return;
         localNodeList.clear();
         try {
             localNodeList.addAll(localChordNodeListView.getSelectionModel().getSelectedItem().scanNetworkFromThisNode());
@@ -116,13 +146,44 @@ public class MainController {
             e.printStackTrace();
             return;
         }
+        if (saveScanToFileCheckBox.isSelected()) {
+            try (FileWriter fw = new FileWriter(saveScanToFileTextField.getText())) {
+                String data = localNodeList.stream().map(node -> node.getNodeID().toHexString().trim() + ";" + node.getNodeURL()).collect(Collectors.joining("\n"));
+                fw.write(data);
+                fw.flush();
+            } catch(IOException e){
+                e.printStackTrace();
+            }
+        }
     }
 
     public void addDataEntry(ActionEvent actionEvent) {
-
+        localChordNodeListView.getSelectionModel().getSelectedItem().insert(entryKeyTextField.getText(), entryDataTextField.getText());
     }
 
     public void removeDataEntry(ActionEvent actionEvent) {
+        localChordNodeListView.getSelectionModel().getSelectedItem().remove(entryKeyTextField.getText(), entryDataTextField.getText());
+    }
 
+    private class AutomatedNetworkScan implements Runnable {
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    if (automatedScanCheckBox.isSelected()) {
+                        Platform.runLater(() -> {
+                            try {
+                                startNetworkScan(null);
+                            } catch (IllegalAccessException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    }
+                    Thread.sleep(5000);
+                } catch (InterruptedException ie) {
+
+                }
+            }
+        }
     }
 }
