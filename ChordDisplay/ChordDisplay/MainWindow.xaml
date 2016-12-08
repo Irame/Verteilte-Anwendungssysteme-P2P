@@ -12,7 +12,7 @@
         <local:MainViewModel/>
     </Window.DataContext>
     <Grid>
-        <ItemsControl ItemsSource="{Binding Nodes}" >
+        <ItemsControl ItemsSource="{Binding Nodes}" Margin="8" >
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <local:RadialPanel>

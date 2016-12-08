@@ -64,6 +64,7 @@
     <Compile Include="MainViewModel.cs" />
     <Compile Include="PropertyChangedBase.cs" />
     <Compile Include="RadialPanel.cs" />
+    <Compile Include="SmileySelector.cs" />
     <Page Include="ChordNodeControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

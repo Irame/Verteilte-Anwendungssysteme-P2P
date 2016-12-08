@@ -8,7 +8,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <StackPanel>
         <Image Source="{Binding Icon}" Height="80" Width="80" Margin="0,0,0,8" />
-        <TextBlock Text="{Binding ID}" TextAlignment="Center" />
-        <TextBlock Text="{Binding IP}" TextAlignment="Center" />
+        <TextBlock Text="{Binding DisplayID}" TextAlignment="Center" FontSize="18" />
+        <TextBlock Text="{Binding IP}" TextAlignment="Center" FontSize="16" />
     </StackPanel>
 </UserControl>
