@@ -41,6 +41,17 @@ namespace ChordDisplay
         private Queue<string> freeSmilies = new Queue<string>();
         private Dictionary<string, string> idSmileyMap = new Dictionary<string, string>();
 
+        public Color GetColor(string ip)
+        {
+            int pos = ip.LastIndexOf('.');
+
+            int host;
+            if (int.TryParse(ip.Substring(pos + 1), out host))
+                return smileyColors[host % smileyColors.Length];
+            else
+                return Colors.Black;
+        }
+
         public string GetSmiley(string id)
         {
             string smiley = null;
