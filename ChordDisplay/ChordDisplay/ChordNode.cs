@@ -23,5 +23,10 @@ namespace ChordDisplay
             get { return ip; }
             set { ip = value; OnPropertyChanged(); }
         }
+
+        public string Icon
+        {
+            get { return "pack://application:,,,/Smilies/iconmonstr-smiley-16-240.png"; }
+        }
     }
 }
