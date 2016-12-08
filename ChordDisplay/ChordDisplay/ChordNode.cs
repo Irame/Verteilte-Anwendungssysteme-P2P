@@ -36,6 +36,11 @@ namespace ChordDisplay
             set { icon = value; OnPropertyChanged(); }
         }
 
+        public System.Windows.Media.Color Color
+        {
+            get { return SmileySelector.Instance.GetColor(url.Host); }
+        }
+
         public ChordNode(string id, string urlString)
         {
             this.id = id;
