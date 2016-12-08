@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace ChordDisplay
 {
@@ -30,6 +31,12 @@ namespace ChordDisplay
             "iconmonstr-smiley-7-240.png",
             "iconmonstr-smiley-8-240.png",
             "iconmonstr-smiley-9-240.png" };
+
+        private Color[] smileyColors = new[]
+        {
+            Colors.Blue, Colors.DodgerBlue, Colors.RoyalBlue, Colors.Aqua, Colors.CadetBlue, Colors.BlueViolet, Colors.Indigo, Colors.Fuchsia, Colors.MediumVioletRed,
+            Colors.Crimson, Colors.DarkRed, Colors.DarkOrange, Colors.Gold, Colors.Chartreuse, Colors.Olive, Colors.DarkGreen
+        };
 
         private Queue<string> freeSmilies = new Queue<string>();
         private Dictionary<string, string> idSmileyMap = new Dictionary<string, string>();
