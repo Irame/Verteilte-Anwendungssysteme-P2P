@@ -1,3 +1,4 @@
+package ChordExerciseExtension;
 import de.uniba.wiai.lspi.chord.service.Key;
 
 public class StringKey implements Key {
