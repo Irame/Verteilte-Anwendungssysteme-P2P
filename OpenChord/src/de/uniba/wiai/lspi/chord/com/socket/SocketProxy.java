@@ -41,6 +41,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import de.uniba.wiai.lspi.chord.com.CommunicationException;
 import de.uniba.wiai.lspi.chord.com.Endpoint;
@@ -173,7 +174,7 @@ public final class SocketProxy extends Proxy implements Runnable {
 	 * 
 	 */
 	static void shutDownAll() {
-		Set<String> keys = proxies.keySet();
+		Set<String> keys = proxies.keySet().stream().collect(Collectors.toSet());
 		for (String key : keys) {
 			proxies.get(key).disconnect();
 		}
