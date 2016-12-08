@@ -28,5 +28,23 @@ namespace ChordDisplay
         {
             get { return "pack://application:,,,/Smilies/iconmonstr-smiley-16-240.png"; }
         }
+
+        protected bool Equals(ChordNode other)
+        {
+            return string.Equals(id, other.id);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((ChordNode) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (id != null ? id.GetHashCode() : 0);
+        }
     }
 }

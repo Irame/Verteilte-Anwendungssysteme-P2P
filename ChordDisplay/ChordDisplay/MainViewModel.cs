@@ -33,33 +33,39 @@ namespace ChordDisplay
         {
             if (e.Name == "AllNodes.csv" && e.ChangeType == WatcherChangeTypes.Changed)
             {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    UpdateRing();
-                });
+                Application.Current.Dispatcher.Invoke(UpdateRing);
             }
         }
 
         private void UpdateRing()
         {
-            Nodes.Clear();
+            List<ChordNode> newElements = ReadFile(@"C:\Temp\AllNodes.csv").ToList();
 
-            foreach (var node in ReadFile(@"C:\Temp\AllNodes.csv"))
+            foreach (var chordNode in Nodes.Where(chordNode => !newElements.Contains(chordNode)).ToList())
             {
-                Nodes.Add(node);
+                Nodes.Remove(chordNode);
+            }
+
+            foreach (var chordNode in newElements.Where(chordNode => !Nodes.Contains(chordNode)))
+            {
+                Nodes.Add(chordNode);
             }
         }
 
         private IEnumerable<ChordNode> ReadFile(string fullFilename)
         {
-            foreach (var line in File.ReadAllLines(fullFilename))
+            using (var fileStream = new StreamReader(File.Open(fullFilename, FileMode.Open, FileAccess.Read, FileShare.Read)))
             {
-                var split = line.Split(';');
+                string line;
+                while ((line = fileStream.ReadLine()) != null)
+                {
+                    var split = line.Split(';');
 
-                var hash = split[0];
-                var url = split[1];
+                    var hash = split[0];
+                    var url = split[1];
 
-                yield return new ChordNode() { ID = hash, IP = url };
+                    yield return new ChordNode() {ID = hash, IP = url};
+                }
             }
         }
     }
