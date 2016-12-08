@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="510.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainController">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints />
+    <RowConstraints minHeight="10.0" prefHeight="1.0" vgrow="ALWAYS" />
+      <RowConstraints maxHeight="40.0" minHeight="0.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="40.0" minHeight="0.0" />
+      <RowConstraints minHeight="10.0" prefHeight="1.0" vgrow="ALWAYS" />
+      <RowConstraints maxHeight="40.0" minHeight="10.0" vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <ListView fx:id="localChordNodeListView" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+         <GridPane.margin>
+            <Insets right="5.0" />
+         </GridPane.margin></ListView>
+      <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="200.0" spacing="10.0" GridPane.rowIndex="2">
+         <children>
+            <Button fx:id="addNewNodeButton" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#addNewNode" text="Add New Node" />
+            <Button fx:id="removeNodeButton" mnemonicParsing="false" onAction="#removeNode" text="Remove Node" />
+         </children>
+         <GridPane.margin>
+            <Insets top="10.0" />
+         </GridPane.margin>
+      </HBox>
+      <Label text="Local Chord Nodes:">
+         <GridPane.margin>
+            <Insets bottom="5.0" />
+         </GridPane.margin>
+         <font>
+            <Font size="14.0" />
+         </font></Label>
+      <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="4">
+         <GridPane.margin>
+            <Insets left="5.0" top="5.0" />
+         </GridPane.margin>
+         <children>
+            <Label fx:id="referencesLabel" text="" />
+            <Label fx:id="entriesLabel" text="">
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin></Label>
+         </children>
+      </VBox>
+      <Label fx:id="nodeLabel" text="No Node selected..." GridPane.columnIndex="1">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <HBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+         <children>
+            <Button fx:id="addEntryButton" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#addDataEntry" text="Add Entry" />
+            <Button fx:id="removeEntryButton" mnemonicParsing="false" onAction="#removeDataEntry" text="Remove Entry" />
+         </children>
+         <GridPane.margin>
+            <Insets top="10.0" />
+         </GridPane.margin>
+      </HBox>
+      <ListView fx:id="networkScanResultListView" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="4">
+         <GridPane.margin>
+            <Insets right="5.0" />
+         </GridPane.margin>
+      </ListView>
+      <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="200.0" spacing="10.0" GridPane.rowIndex="5">
+         <children>
+            <Button fx:id="networkScanButton" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#startNetworkScan" text="Start Network Scan" />
+         </children>
+         <GridPane.margin>
+            <Insets top="10.0" />
+         </GridPane.margin>
+      </HBox>
+      <Label text="Network Scan:" GridPane.rowIndex="3">
+         <font>
+            <Font size="14.0" />
+         </font>
+         <GridPane.margin>
+            <Insets bottom="5.0" top="10.0" />
+         </GridPane.margin>
+      </Label>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</GridPane>
