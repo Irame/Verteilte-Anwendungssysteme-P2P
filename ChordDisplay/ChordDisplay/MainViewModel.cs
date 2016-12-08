@@ -84,7 +84,7 @@ namespace ChordDisplay
                     var hash = split[0];
                     var url = split[1];
 
-                    yield return new ChordNode() {ID = hash, IP = url};
+                    yield return new ChordNode(hash, url);
                 }
             }
         }
