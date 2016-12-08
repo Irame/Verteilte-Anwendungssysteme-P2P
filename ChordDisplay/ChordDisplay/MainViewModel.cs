@@ -53,7 +53,7 @@ namespace ChordDisplay
         {
             if (e.Name == FileName && e.ChangeType == WatcherChangeTypes.Changed)
             {
-                System.Threading.Thread.Sleep(1000);
+                System.Threading.Thread.Sleep(100);
                 Application.Current.Dispatcher.Invoke(UpdateRing);
             }
         }
