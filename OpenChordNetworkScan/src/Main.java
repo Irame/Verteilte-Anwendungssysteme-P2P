@@ -42,8 +42,8 @@ public class Main {
 		while (true) {
 			WriteLine("Scanning Network...");
 			List<Node> nodes = scanNetwork(chord);
-			String data = nodes.stream().map(node -> node.getNodeID().toHexString().trim() + ";" + node.getNodeURL()).collect(Collectors.joining("\n\t"));
-			WriteLine("Nodes:\n\t" + data);
+			String data = nodes.stream().map(node -> node.getNodeID().toHexString().trim() + ";" + node.getNodeURL()).collect(Collectors.joining("\n"));
+			WriteLine("Nodes:\n\t" + data.replace("\n", "\n\t"));
 
 			WriteLine("Writing to File...");
 			try (FileWriter fw = new FileWriter(scanResultFile)) {
