@@ -1,10 +1,14 @@
+import com.sun.istack.internal.NotNull;
 import de.uniba.wiai.lspi.chord.com.CommunicationException;
 import de.uniba.wiai.lspi.chord.com.Node;
 import de.uniba.wiai.lspi.chord.data.ID;
 import de.uniba.wiai.lspi.chord.data.URL;
+import de.uniba.wiai.lspi.chord.service.Chord;
+import de.uniba.wiai.lspi.chord.service.Key;
 import de.uniba.wiai.lspi.chord.service.ServiceException;
 import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
@@ -12,6 +16,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Felix on 25.11.2016.
@@ -43,28 +48,24 @@ public class ChordNode {
         chord.leave();
     }
 
+    public void insert(String key, Serializable data) {
+        chord.insert(new StringKey(key), data);
+    }
+
+    public Set<Serializable> retrieve(String key) {
+        return chord.retrieve(new StringKey(key));
+    }
+
+    public void remove(String key, Serializable data) {
+        chord.remove(new StringKey(key), data);
+    }
+
     public String getEntriesAsString() {
         return chord.printEntries();
     }
 
-    public String getFingerTableAsString() {
-        return chord.printFingerTable();
-    }
-
-    public String getPredecessorAsString() {
-        return chord.printPredecessor();
-    }
-
-    public String getSuccessorListAsString() {
-        return chord.printSuccessorList();
-    }
-
     public String getReferencesAsString() {
         return chord.printReferences();
-    }
-
-    public String getNodeAsString() {
-        return chord.toString();
     }
 
     public URL getUrl() {
@@ -109,5 +110,35 @@ public class ChordNode {
     @Override
     public String toString() {
         return String.format("%s - %s", name, chord.toString());
+    }
+
+    private static class StringKey implements Key {
+        @NotNull
+        private String key;
+
+        public StringKey(String key) {
+            this.key = key;
+        }
+
+        @Override
+        public byte[] getBytes() {
+            return key.getBytes();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            StringKey stringKey = (StringKey) o;
+
+            return key != null ? key.equals(stringKey.key) : stringKey.key == null;
+
+        }
+
+        @Override
+        public int hashCode() {
+            return key != null ? key.hashCode() : 0;
+        }
     }
 }
