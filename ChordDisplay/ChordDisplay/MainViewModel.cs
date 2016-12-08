@@ -14,6 +14,10 @@ namespace ChordDisplay
     {
         FileSystemWatcher fileWatcher;
 
+        string FullFilename { get; set; }
+        string FilePath => Path.GetDirectoryName(FullFilename);
+        string FileName => Path.GetFileName(FullFilename);
+
         public ObservableCollection<ChordNode> Nodes
         {
             get;
@@ -22,16 +26,32 @@ namespace ChordDisplay
 
         public MainViewModel()
         {
-            fileWatcher = new FileSystemWatcher(@"C:\Temp\", "*.csv");
+            ParseCmdArgs();
+
+            fileWatcher = new FileSystemWatcher(FilePath);
             fileWatcher.Changed += FileWatcher_Changed;
             fileWatcher.EnableRaisingEvents = true;
 
             UpdateRing();
         }
 
+        private void ParseCmdArgs()
+        {
+            string[] args = Environment.GetCommandLineArgs();
+
+            if (args.Length > 1)
+            {
+                FullFilename = args[1];
+            }
+            else
+            {
+                throw new InvalidOperationException("Please provide the full filename of the file to watch.");
+            }
+        }
+
         private void FileWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-            if (e.Name == "AllNodes.csv" && e.ChangeType == WatcherChangeTypes.Changed)
+            if (e.Name == FileName && e.ChangeType == WatcherChangeTypes.Changed)
             {
                 Application.Current.Dispatcher.Invoke(UpdateRing);
             }
@@ -39,7 +59,7 @@ namespace ChordDisplay
 
         private void UpdateRing()
         {
-            List<ChordNode> newElements = ReadFile(@"C:\Temp\AllNodes.csv").ToList();
+            List<ChordNode> newElements = ReadFile(FullFilename).ToList();
 
             foreach (var chordNode in Nodes.Where(chordNode => !newElements.Contains(chordNode)).ToList())
             {
