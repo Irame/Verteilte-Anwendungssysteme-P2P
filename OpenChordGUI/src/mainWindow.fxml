@@ -114,7 +114,7 @@
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
                   <CheckBox fx:id="saveScanToFileCheckBox" mnemonicParsing="false" text="Save to File" />
-                  <TextField fx:id="saveScanToFileTextField" HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="saveScanToFileTextField" text="C:\Temp\AllNodes.csv" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
          </children>

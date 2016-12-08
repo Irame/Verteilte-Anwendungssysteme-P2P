@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../OpenChord/OpenChord.iml" filepath="$PROJECT_DIR$/../OpenChord/OpenChord.iml" />
       <module fileurl="file://$PROJECT_DIR$/OpenChordGUI.iml" filepath="$PROJECT_DIR$/OpenChordGUI.iml" />
     </modules>
   </component>
