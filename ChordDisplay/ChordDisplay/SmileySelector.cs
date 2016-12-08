@@ -51,7 +51,7 @@ namespace ChordDisplay
             if (freeSmilies.Count == 0)
             {
                 // Shuffel smiley list
-                foreach (var _ in smileyNames.OrderBy(a => Guid.NewGuid())) 
+                foreach (var _ in smileyNames.Shuffle()) 
                     freeSmilies.Enqueue(_);
             }
 
