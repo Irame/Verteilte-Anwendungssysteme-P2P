@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../OpenChord/OpenChord.iml" filepath="$PROJECT_DIR$/../OpenChord/OpenChord.iml" />
       <module fileurl="file://$PROJECT_DIR$/OpenChordGUI.iml" filepath="$PROJECT_DIR$/OpenChordGUI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../OpenChordNetworkScan/OpenChordNetworkScan.iml" filepath="$PROJECT_DIR$/../OpenChordNetworkScan/OpenChordNetworkScan.iml" />
     </modules>
   </component>
 </project>

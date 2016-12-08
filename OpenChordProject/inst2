@@ -1,0 +1,13 @@
+create c1 localhost 8080
+join c2 localhost 8081 localhost 8080
+join c3 localhost 8082 localhost 8080
+join c4 localhost 8083 localhost 8080
+join c5 localhost 8084 localhost 8080
+join c6 localhost 8085 localhost 8080
+join c7 localhost 8086 localhost 8080
+join c8 localhost 8087 localhost 8080
+insert c1 k1 a
+insert c1 k2 b
+insert c1 k3 c
+insert c1 k4 d
+insert c1 k5 e
