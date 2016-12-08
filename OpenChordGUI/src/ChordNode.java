@@ -74,24 +74,13 @@ public class ChordNode {
 
     public List<Node> scanNetworkFromThisNode() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         List<Node> result = new ArrayList<>();
-        Method findSuccessor = ChordImpl.class.getDeclaredMethod("findSuccessor", ID.class);
-        findSuccessor.setAccessible(true);
 
         BigInteger idBigInt = BigInteger.ZERO;
-
         BigInteger newIdBigInt = null;
+
         while (true) {
-            byte[] bigIntBytes = idBigInt.toByteArray();
-            byte[] buffer = new byte[20];
-            Arrays.fill(buffer, (byte) 0);
-
-            if (bigIntBytes.length > 20)
-                System.arraycopy(bigIntBytes, bigIntBytes.length-20, buffer, 0, 20);
-            else
-                System.arraycopy(bigIntBytes, 0, buffer, 20-bigIntBytes.length, bigIntBytes.length);
-
-            ID id = new ID(buffer);
-            Node node = (Node) findSuccessor.invoke(chord, id);
+            ID id = BigIntToID(idBigInt);
+            Node node = chord.findSuccessor(id);
 
             newIdBigInt = new BigInteger(node.getNodeID().toHexString().replace(" ", ""), 16);
             if (newIdBigInt.compareTo(idBigInt) < 0)
@@ -101,10 +90,24 @@ public class ChordNode {
 
             if (newIdBigInt.compareTo(idBigInt) == 0)
                 break;
+
             idBigInt = newIdBigInt.add(BigInteger.ONE);
         }
 
         return result;
+    }
+
+    private ID BigIntToID(BigInteger bigInt)
+    {
+        byte[] bigIntBytes = bigInt.toByteArray();
+        byte[] buffer = new byte[20];
+
+        if (bigIntBytes.length > 20)
+            System.arraycopy(bigIntBytes, bigIntBytes.length-20, buffer, 0, 20);
+        else
+            System.arraycopy(bigIntBytes, 0, buffer, 20-bigIntBytes.length, bigIntBytes.length);
+
+        return new ID(buffer);
     }
 
     @Override
