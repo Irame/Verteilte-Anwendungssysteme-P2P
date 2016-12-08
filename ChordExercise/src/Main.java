@@ -14,13 +14,11 @@ import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
 public class Main {
 	static Chord chord = null;
 	
-
-	
 	public static void main(String[] args) throws ServiceException, IOException {
 		PropertiesLoader.loadPropertyFile();
 
 		// Aufgabe 1 Chord Ring Joinen
-		joinChordRing("10.31.171.41");
+		joinChordRing("*.*.*.*");
 		// Aufgabe 2 String runterladen
 		List<String> list = retrieveStrings("stringKeyName");
 		for(String s : list){
@@ -28,12 +26,10 @@ public class Main {
 		}
 		// Aufgabe 3 String bereitstellen
 		publishString("stringKeyName", "text");
-		// Aufgabe 4 Datei runterladen
+		// Aufgabe 4 & 6 Datei runterladen
 		retrieveFile("fileKeyName", "D:\\Path\\to\\file.png");
 		// Aufgabe 5 Eigene Datei bereitstellen
-		publishFile("lenna", "D:\\Git\\Verteilte-Anwendungssysteme-P2P\\OpenChordProject\\ChordExtension.jar");
-		// Aufgabe 6 Datei vom Nachbarn runterladen
-		retrieveFile("keyName", "D:\\Path\\to\\file.png");
+		publishFile("fileKeyName", "D:\\Path\\to\\file.png");
 		// Aufgabe 7 Chord Ring erstellen
 		createChordRing();
 	}
