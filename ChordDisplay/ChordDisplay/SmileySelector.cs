@@ -36,7 +36,7 @@ namespace ChordDisplay
         {
             Colors.Blue, Colors.DodgerBlue, Colors.RoyalBlue, Colors.Aqua, Colors.CadetBlue, Colors.BlueViolet, Colors.Indigo, Colors.Fuchsia, Colors.MediumVioletRed,
             Colors.Crimson, Colors.DarkRed, Colors.DarkOrange, Colors.Gold, Colors.Chartreuse, Colors.Olive, Colors.DarkGreen
-        };
+        }.Shuffle().ToArray();
 
         private Queue<string> freeSmilies = new Queue<string>();
         private Dictionary<string, string> idSmileyMap = new Dictionary<string, string>();

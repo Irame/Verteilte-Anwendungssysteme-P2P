@@ -69,7 +69,7 @@ namespace ChordDisplay
 
             foreach (var chordNode in newElements.Where(chordNode => !Nodes.Contains(chordNode)))
             {
-                Nodes.Add(chordNode);
+                Nodes.Insert(Nodes.TakeWhile(node => node.ID.CompareTo(chordNode.ID) < 0).Count(),chordNode);
             }
         }
 

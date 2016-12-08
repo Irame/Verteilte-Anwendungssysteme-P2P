@@ -28,7 +28,7 @@ namespace ChordDisplay
             if (Children.Count == 0)
                 return finalSize;
 
-            double _angle = 0;
+            double _angle = Math.PI/2;
 
             //Degrees converted to Radian by multiplying with PI/180
             double _incrementalAngularSpace = (360.0 / Children.Count) * (Math.PI / 180);
@@ -40,7 +40,7 @@ namespace ChordDisplay
             foreach (UIElement elem in Children)
             {
                 //Calculate the point on the circle for the element
-                Point childPoint = new Point(Math.Cos(_angle) * radiusX, -Math.Sin(_angle) * radiusY);
+                Point childPoint = new Point(-Math.Cos(_angle) * radiusX, -Math.Sin(_angle) * radiusY);
 
                 //Offsetting the point to the Avalable rectangular area which is FinalSize.
                 Point actualChildPoint = new Point(finalSize.Width / 2 + childPoint.X - elem.DesiredSize.Width / 2, finalSize.Height / 2 + childPoint.Y - elem.DesiredSize.Height / 2);
