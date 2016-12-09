@@ -1,5 +1,6 @@
 import javafx.scene.control.Alert;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
@@ -21,9 +22,8 @@ public abstract class Utils {
         alert.showAndWait();
     }
 
-    public static Serializable readFile(String filePath) throws IOException{
-        Path path = Paths.get(filePath);
-        return Files.readAllBytes(path);
+    public static Serializable readFile(String filePath) throws IOException {
+        return new FileContainer(filePath);
     }
 
     public static void writeFile(Set<Serializable> data, String filePath) throws IOException {
@@ -33,7 +33,14 @@ public abstract class Utils {
         int i = 0;
         for(Serializable s : data){
             String name = i == 0 ? fileName + extension : fileName + i + extension;
-            Files.write(Paths.get(name), (byte[]) s, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+			if (s instanceof FileContainer)
+				((FileContainer) s).writeToFile(name);
+			else if (s instanceof String)
+				Files.write(Paths.get(name), ((String) s).getBytes());
+			else if (s instanceof byte[])
+                Files.write(Paths.get(name), (byte[]) s, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+			else
+			    continue;
             i++;
         }
     }
