@@ -165,6 +165,18 @@ public class MainController {
         localChordNodeListView.getSelectionModel().getSelectedItem().remove(entryKeyTextField.getText(), entryDataTextField.getText());
     }
 
+    public void deinit() {
+        localNodeList.clear();
+        localChordNodeList.forEach(chordNode -> {
+            try {
+                chordNode.leave();
+            } catch (ServiceException e) {
+                e.printStackTrace();
+            }
+        });
+        localChordNodeList.clear();
+    }
+
     private class AutomatedNetworkScan implements Runnable {
         @Override
         public void run() {
