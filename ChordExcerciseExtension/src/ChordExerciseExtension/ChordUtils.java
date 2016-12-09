@@ -45,6 +45,7 @@ public abstract class ChordUtils {
 		for(Serializable s : data){
 			String name = i == 0 ? fileName + extension : fileName + i + extension;
 			Files.write(Paths.get(name), (byte[]) s, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+			i++;
 		}
 	}
 }
