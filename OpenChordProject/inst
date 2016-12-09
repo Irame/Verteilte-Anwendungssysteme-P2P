@@ -1,4 +1,0 @@
-create c1 localhost 8080
-join c2 localhost 8081 localhost 8080
-insert c1 k1 blaedasdkjhal
-insertimg c1 k2 D:\GitRepos\Verteilte-Anwendungssysteme-P2P\OpenChordProject\Lenna_original.png

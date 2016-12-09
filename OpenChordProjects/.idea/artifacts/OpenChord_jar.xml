@@ -3,7 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/OpenChord_jar</output-path>
     <root id="archive" name="OpenChord.jar">
       <element id="module-output" name="OpenChord" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../OpenChord/lib/log4j.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/OpenChord/lib/log4j.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
