@@ -65,15 +65,27 @@
             <Font size="14.0" />
          </font>
       </Label>
-      <HBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+      <VBox prefHeight="0.0" prefWidth="0.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
          <children>
-            <Button fx:id="addEntryButton" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#addDataEntry" text="Add Entry" />
-            <Button fx:id="removeEntryButton" mnemonicParsing="false" onAction="#removeDataEntry" text="Remove Entry" />
+            <HBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="0.0" spacing="10.0">
+               <children>
+                  <Button fx:id="addStringButton" mnemonicParsing="false" onAction="#addStringEntry" text="Add String" />
+                  <Button fx:id="removeStringButton" mnemonicParsing="false" onAction="#removeStringEntry" text="Remove String" />
+                  <Button fx:id="retrieveStringButton" mnemonicParsing="false" onAction="#requestStringEntry" text="Retrieve String" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="0.0" spacing="10.0">
+               <children>
+                  <Button fx:id="addFileButton" mnemonicParsing="false" onAction="#addFileEntry" text="Add File" />
+                  <Button fx:id="removeFileButton" mnemonicParsing="false" onAction="#removeFileEntry" text="Remove File" />
+                  <Button fx:id="saveFileButton" mnemonicParsing="false" onAction="#saveFileEntry" text="Save File" />
+               </children>
+            </HBox>
          </children>
          <GridPane.margin>
             <Insets top="10.0" />
          </GridPane.margin>
-      </HBox>
+      </VBox>
       <ListView fx:id="networkScanResultListView" GridPane.rowIndex="4" GridPane.rowSpan="2">
          <GridPane.margin>
             <Insets right="5.0" />
@@ -97,7 +109,7 @@
             </VBox>
             <VBox prefHeight="0.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Label text="Data" />
+                  <Label text="Data (String / File path):" />
                   <TextField fx:id="entryDataTextField" />
                </children>
             </VBox>

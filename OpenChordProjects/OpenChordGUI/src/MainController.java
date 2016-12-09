@@ -39,10 +39,16 @@ public class MainController {
 
     public TextField entryKeyTextField;
     public TextField entryDataTextField;
-    public Button addEntryButton;
-    public Button removeEntryButton;
 
-    private Thread scannerThread;
+	public Button addStringButton;
+	public Button removeStringButton;
+	public Button retrieveStringButton;
+
+	public Button addFileButton;
+	public Button removeFileButton;
+	public Button saveFileButton;
+
+	private Thread scannerThread;
 
     public void init() {
         localChordNodeList = FXCollections.observableList(new ArrayList<>());
@@ -54,15 +60,19 @@ public class MainController {
         removeNodeButton.disableProperty().bind(localChordNodeListView.getSelectionModel().selectedItemProperty().isNull());
         networkScanButton.disableProperty().bind(localChordNodeListView.getSelectionModel().selectedItemProperty().isNull());
 
-        addEntryButton.disableProperty()
-                .bind(localChordNodeListView.getSelectionModel().selectedItemProperty().isNull()
-                        .or(entryKeyTextField.textProperty().isEmpty())
-                        .or(entryDataTextField.textProperty().isEmpty()));
 
-        removeEntryButton.disableProperty()
-                .bind(localChordNodeListView.getSelectionModel().selectedItemProperty().isNull()
-                        .or(entryKeyTextField.textProperty().isEmpty())
-                        .or(entryDataTextField.textProperty().isEmpty()));
+	    retrieveStringButton.disableProperty()
+			    .bind(localChordNodeListView.getSelectionModel().selectedItemProperty().isNull()
+					    .or(entryKeyTextField.textProperty().isEmpty()));
+
+        addStringButton.disableProperty()
+                .bind(retrieveStringButton.disableProperty()
+		                .or(entryDataTextField.textProperty().isEmpty()));
+
+	    removeStringButton.disableProperty().bind(addStringButton.disableProperty());
+        addFileButton.disableProperty().bind(addStringButton.disableProperty());
+        removeFileButton.disableProperty().bind(addStringButton.disableProperty());
+        saveFileButton.disableProperty().bind(addStringButton.disableProperty());
 
         localChordNodeListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
@@ -157,13 +167,44 @@ public class MainController {
         }
     }
 
-    public void addDataEntry(ActionEvent actionEvent) {
+    public void addStringEntry(ActionEvent actionEvent) {
         localChordNodeListView.getSelectionModel().getSelectedItem().insert(entryKeyTextField.getText(), entryDataTextField.getText());
     }
 
-    public void removeDataEntry(ActionEvent actionEvent) {
+    public void removeStringEntry(ActionEvent actionEvent) {
         localChordNodeListView.getSelectionModel().getSelectedItem().remove(entryKeyTextField.getText(), entryDataTextField.getText());
     }
+
+	public void requestStringEntry(ActionEvent actionEvent) {
+		entryDataTextField.setText(
+				localChordNodeListView.getSelectionModel().getSelectedItem()
+						.retrieve(entryKeyTextField.getText())
+						.stream().map(Object::toString).collect(Collectors.joining("|")));
+	}
+
+	public void addFileEntry(ActionEvent actionEvent) {
+		try {
+			localChordNodeListView.getSelectionModel().getSelectedItem().insert(entryKeyTextField.getText(), Utils.readFile(entryDataTextField.getText()));
+		} catch (IOException e) {
+			Utils.openAlert(AlertType.ERROR, "Error while adding File", "Error while adding File (" + e.toString() + ")");
+		}
+	}
+
+	public void removeFileEntry(ActionEvent actionEvent) {
+		try {
+			localChordNodeListView.getSelectionModel().getSelectedItem().remove(entryKeyTextField.getText(), Utils.readFile(entryDataTextField.getText()));
+		} catch (IOException e) {
+			Utils.openAlert(AlertType.ERROR, "Error while removing File", "Error while removing File (" + e.toString() + ")");
+		}
+	}
+
+	public void saveFileEntry(ActionEvent actionEvent) {
+		try {
+			Utils.writeFile(localChordNodeListView.getSelectionModel().getSelectedItem().retrieve(entryKeyTextField.getText()), entryDataTextField.getText());
+		} catch (IOException e) {
+			Utils.openAlert(AlertType.ERROR, "Error while saving File", "Error while saving File (" + e.toString() + ")");
+		}
+	}
 
     public void deinit() {
         localNodeList.clear();
