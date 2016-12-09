@@ -166,7 +166,7 @@ public final class SocketEndpoint extends Endpoint implements Runnable {
 		/*
 		 * Close outgoing connections.
 		 */
-		SocketProxy.shutDownAll(); 
+		SocketProxy.shutDownAllProxiesFromUrl(this.getURL());
 	}
 
 	/**

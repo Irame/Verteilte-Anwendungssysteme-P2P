@@ -173,12 +173,12 @@ public final class SocketProxy extends Proxy implements Runnable {
 	 * shutdown cleanly.
 	 * 
 	 */
-	static void shutDownAll() {
-		Set<String> keys = proxies.keySet().stream().collect(Collectors.toSet());
+	static void shutDownAllProxiesFromUrl(URL url) {
+		String urlString = url.toString();
+		Set<String> keys = proxies.keySet().stream().filter(s -> s.startsWith(urlString)).collect(Collectors.toSet());
 		for (String key : keys) {
 			proxies.get(key).disconnect();
 		}
-		proxies.clear();
 	}
 
 	/**
