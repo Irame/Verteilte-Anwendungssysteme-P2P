@@ -19,20 +19,20 @@ public class Main {
 	public static void main(String[] args) throws ServiceException, IOException {
 		PropertiesLoader.loadPropertyFile();
 
-		// Aufgabe 1 Chord Ring Joinen
+		// Aufgabe Chord Ring Joinen
 		joinChordRing("*.*.*.*");
-		// Aufgabe 2 String runterladen
+		// Aufgabe String runterladen
 		List<String> list = retrieveStrings("stringKeyName");
 		for(String s : list){
 			System.out.println(s);
 		}
-		// Aufgabe 3 String bereitstellen
+		// Aufgabe String bereitstellen
 		publishString("stringKeyName", "text");
-		// Aufgabe 4 & 6 Datei runterladen
+		// Aufgabe Datei runterladen
 		retrieveFile("fileKeyName", "D:\\Path\\to\\file.png");
-		// Aufgabe 5 Eigene Datei bereitstellen
+		// Aufgabe Eigene Datei bereitstellen
 		publishFile("fileKeyName", "D:\\Path\\to\\file.png");
-		// Aufgabe 7 Chord Ring erstellen
+		// Aufgabe Chord Ring erstellen
 		createChordRing();
 	}
 	
