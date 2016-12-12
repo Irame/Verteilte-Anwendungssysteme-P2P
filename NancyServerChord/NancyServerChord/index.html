@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Keysharing Platform - OpenChord</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Keysharing Platform</h2>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <form action="/create" method="POST" class="form-inline">
+                    <div class="form-group">
+                        <label for="personInput">Name:</label>
+                        <input id="personInput" type="text" name="Person" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="keyInput">Key:</label>
+                        <input id="keyInput" type="text" name="KeyName" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="typeSelect">Data Type:</label>
+                        <select id="typeSelect" name="DataType" class="form-control">
+                            <option value="String">String</option>
+                            <option value="File">File</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send!</button>
+                </form>
+            </div>
+            <div class="panel-default">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Key</th>
+                            <th>DataType</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @Each
+                        <tr>
+                            <td>@Current.Person</td>
+                            <td>@Current.KeyName</td>
+                            <td>@Current.DataType</td>
+                        </tr>
+                        @EndEach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
