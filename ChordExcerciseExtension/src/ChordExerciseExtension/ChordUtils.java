@@ -33,8 +33,7 @@ public abstract class ChordUtils {
 	}
 	
 	public static Serializable readFile(String filePath) throws IOException{
-		Path path = Paths.get(filePath);
-		return Files.readAllBytes(path);
+		return new DataContainer(Files.readAllBytes(Paths.get(filePath)));
 	}
 	
 	public static void writeFile(Set<Serializable> data, String filePath) throws IOException{
@@ -43,8 +42,17 @@ public abstract class ChordUtils {
 		String fileName = filePath.substring(0, pointIndex);
 		int i = 0;
 		for(Serializable s : data){
+			byte[] bytesToWrite = null;
+			if (s instanceof DataContainer)
+				bytesToWrite = ((DataContainer) s).data;
+			else if (s instanceof String)
+				bytesToWrite = ((String) s).getBytes();
+			else if (s instanceof byte[])
+				bytesToWrite = (byte[]) s;
+			else
+				continue;
 			String name = i == 0 ? fileName + extension : fileName + i + extension;
-			Files.write(Paths.get(name), (byte[]) s, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+			Files.write(Paths.get(name), bytesToWrite, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
 			i++;
 		}
 	}
