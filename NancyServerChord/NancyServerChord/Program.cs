@@ -11,10 +11,15 @@ namespace NancyServerChord
     {
         static void Main(string[] args)
         {
-            using (var host = new NancyHost(new Uri("http://localhost:1234")))
+            string baseURL = "http://localhost";
+            string port = args.ElementAtOrDefault(0) ?? "1234";
+
+            Uri url = new Uri($"{baseURL}:{port}");
+
+            using (var host = new NancyHost(url))
             {
                 host.Start();   
-                Console.WriteLine("Running on http://localhost:1234");
+                Console.WriteLine($"Running on {url.OriginalString}");
                 Console.ReadLine();
             }
         }
