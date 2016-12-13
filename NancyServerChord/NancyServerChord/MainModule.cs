@@ -11,14 +11,18 @@ namespace NancyServerChord
 {
     public class MainModule : NancyModule
     {
-        private object fileLock = new object();
-        private string filename = "data.txt";
+        private static object fileLock = new object();
+        private static string filename = "data.txt";
 
         private static List<EntryInfo> entries = new List<EntryInfo>(); 
+        static MainModule()
+        {
+            ReadFromFile();
+        }
 
         public MainModule()
         {
-            ReadFromFile();
+            
 
             Get["/"] = _ =>
             {
@@ -50,8 +54,12 @@ namespace NancyServerChord
             }             
         }
 
-        private void ReadFromFile()
+        private static void ReadFromFile()
         {
+            if (!File.Exists(filename))
+            {
+                return;
+            }
             foreach (var line in File.ReadAllLines(filename))
             {
                 string[] split = line.Split(';');

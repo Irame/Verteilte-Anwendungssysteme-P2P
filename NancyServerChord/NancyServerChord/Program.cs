@@ -12,7 +12,7 @@ namespace NancyServerChord
         static void Main(string[] args)
         {
             string baseURL = "http://localhost";
-            string port = args.ElementAtOrDefault(0) ?? "1234";
+            string port = args.ElementAtOrDefault(0) ?? "80";
 
             Uri url = new Uri($"{baseURL}:{port}");
 
