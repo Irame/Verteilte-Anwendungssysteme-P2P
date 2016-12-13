@@ -23,7 +23,13 @@ namespace NancyServerChord
             {
                 EntryInfo entryInfo;
                 entryInfo = this.Bind<EntryInfo>();
-                entrys.Add(entryInfo);
+
+                entryInfo.Normalize();
+                if (!entryInfo.IsEmpty())
+                {
+                    entrys.Add(entryInfo);
+                }
+
                 return Response.AsRedirect("/");
             };
         }

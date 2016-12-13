@@ -16,5 +16,16 @@ namespace NancyServerChord
         public string Person;
         public string KeyName;
         public DataType DataType;
+
+        public void Normalize()
+        {
+            Person = Person?.Trim();
+            KeyName = KeyName?.Trim();
+        }
+        
+        public bool IsEmpty()
+        {
+            return string.IsNullOrEmpty(Person) || string.IsNullOrEmpty(KeyName);
+        }
     }
 }
