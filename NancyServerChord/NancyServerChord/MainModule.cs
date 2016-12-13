@@ -14,7 +14,7 @@ namespace NancyServerChord
         private object fileLock = new object();
         private string filename = "data.txt";
 
-        private static List<EntryInfo> entrys = new List<EntryInfo>(); 
+        private static List<EntryInfo> entries = new List<EntryInfo>(); 
 
         public MainModule()
         {
@@ -22,7 +22,7 @@ namespace NancyServerChord
 
             Get["/"] = _ =>
             {
-                return View["index.html", entrys];
+                return View["index.html", entries];
             };
 
             Post["/create"] = _ =>
@@ -33,7 +33,7 @@ namespace NancyServerChord
                 entryInfo.Normalize();
                 if (!entryInfo.IsEmpty())
                 {
-                    entrys.Add(entryInfo);
+                    entries.Add(entryInfo);
                     AppendToFile(entryInfo);
                 }
 
@@ -64,7 +64,7 @@ namespace NancyServerChord
 
                 if (!entry.IsEmpty())
                 {
-                    entrys.Add(entry);
+                    entries.Add(entry);
                 }
             }
         }
